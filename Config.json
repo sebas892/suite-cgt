@@ -1,0 +1,12 @@
+[
+  {
+    "nombre": "Estrés por Calor",
+    "icono": "icono_1.png",
+    "archivo": "estres_calor.html"
+  },
+  {
+    "nombre": "PRL Desbrozadora",
+    "icono": "icono_desbroz.png",
+    "archivo": "PRL_Desbrozadora.html"
+  }
+]
