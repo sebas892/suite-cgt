@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diario de Peligrosidad - CGT</title>
+    <style>
+        :root { --rojo-cgt: #E30613; --negro: #1a1a1a; --gris: #f3f4f6; }
+        body { font-family: 'Segoe UI', sans-serif; background: #cbd5e1; padding: 10px; margin: 0; }
+        .wrapper { max-width: 500px; margin: auto; background: white; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); overflow: hidden; }
+        .header { background: var(--negro); color: white; padding: 20px; text-align: center; border-bottom: 5px solid var(--rojo-cgt); }
+        .header h2 { margin: 0; text-transform: uppercase; letter-spacing: 1px; font-size: 1.5em; }
+        .header p { margin: 8px 0 0 0; font-size: 0.9em; font-style: italic; color: #eee; line-height: 1.3; }
+        .content { padding: 15px; }
+        .stats-box { background: var(--negro); color: white; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 15px; }
+        .stats-box h1 { margin: 5px 0; font-size: 2.2em; color: #fff; }
+        .tramo-card { background: var(--gris); padding: 15px; border-radius: 8px; border-left: 5px solid var(--rojo-cgt); margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 4px; font-size: 0.85em; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 10px; box-sizing: border-box; font-size: 16px; }
+        .btn { border: none; padding: 15px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; text-transform: uppercase; }
+        .btn-add { background: var(--rojo-cgt); color: white; }
+        .btn-pdf { background: #454545; color: white; margin-top: 10px; border: 1px solid #000; }
+        .log-item { background: white; border: 1px solid #ddd; padding: 10px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .info-tramo { font-size: 0.85em; }
+        .precio-tramo { font-weight: bold; color: var(--rojo-cgt); font-size: 1.1em; }
+        .btn-del { background: none; border: none; color: #999; cursor: pointer; font-size: 1.2em; padding-left: 10px; }
+        .nota-reivindicativa { background: #fff1f1; border: 2px solid var(--rojo-cgt); padding: 15px; border-radius: 8px; margin-top: 25px; font-size: 0.85em; line-height: 1.4; color: #333; }
+        .nota-reivindicativa h4 { color: var(--rojo-cgt); margin: 0 0 10px 0; text-transform: uppercase; border-bottom: 1px solid var(--rojo-cgt); padding-bottom: 5px; }
+        .nota-reivindicativa ul { padding-left: 18px; margin: 10px 0; }
+        .nota-reivindicativa li { margin-bottom: 8px; }
+        .footer { padding: 20px; font-size: 0.75em; color: #555; border-top: 1px solid #eee; background: #fff; }
+        .base-legal { margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 5px; border: 1px solid #ddd; font-style: italic; }
+        @media print {
+            body { background: white; padding: 0; }
+            .wrapper { box-shadow: none; border: none; max-width: 100%; }
+            .tramo-card, .btn, .btn-del, .stats-box, button, .copyright-screen { display: none !important; }
+            .header { background: white !important; color: black !important; border-bottom: 2px solid black; }
+            .header p { color: black !important; }
+            .header img { filter: grayscale(1); }
+            .log-item { border: none; border-bottom: 1px solid #000; page-break-inside: avoid; }
+            .precio-tramo { color: black !important; }
+            .stats-print { display: block !important; text-align: right; margin-top: 20px; font-size: 1.2em; font-weight: bold; border-top: 2px solid #000; padding-top: 10px; }
+            .base-legal { border: none; background: none; font-size: 0.8em; margin-top: 30px; }
+            .nota-reivindicativa { display: block !important; }
+        }
+        .stats-print { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="header">
+        <img src="https://lh3.googleusercontent.com/d/1CButBy2GeflsQPx8FKWMT3yDjo2NvfNw" alt="Logo CGT" style="max-width: 70px; margin-bottom: 10px;">
+        <h2>DIARIO DE PELIGROSIDAD</h2>
+        <p>Tu trabajo y tu seguridad no es gratuita, exige tus derechos.</p>
+    </div>
+
+    <div class="content">
+        <div class="stats-box">
+            <span style="font-size: 0.8em; opacity: 0.8;">TOTAL ACUMULADO A RECLAMAR:</span>
+            <h1 id="total-acumulado">0.00 €</h1>
+        </div>
+
+        <div class="tramo-card">
+            <label>Fecha:</label>
+            <input type="date" id="fecha">
+
+            <label>ℹ️ Supuestos del Art. 32 (Informativo):</label>
+            <select id="info-supuestos" style="background-color: #fff9f9; border: 1px solid var(--rojo-cgt);">
+                <option value="">-- Consultar supuestos que generan Plus --</option>
+                <option disabled>📍 UBICACIÓN Y TERRENO:</option>
+                <option disabled>• Medianas, rotondas y bordes viarios</option>
+                <option disabled>• Calles, carreteras, autovías y autopistas</option>
+                <option disabled>• Trabajos en taludes (Penosidad e inestabilidad)</option>
+                <option disabled>🧪 PRODUCTOS QUÍMICOS:</option>
+                <option disabled>• Fitosanitarios, herbicidas e insecticidas</option>
+                <option disabled>• Pesticidas y fungicidas</option>
+                <option disabled>🪜 TRABAJOS EN ALTURA (>1m):</option>
+                <option disabled>• Poda, resubido, recorte o limpieza</option>
+                <option disabled>• Terciado, aclarado, pinzado y formación</option>
+            </select>
+
+            <label>Ubicación / Tarea:</label>
+            <input type="text" id="tarea" placeholder="Ej: Talud M-30 / Desbroce mediana">
+            
+            <div style="display: flex; gap: 8px;">
+                <div style="flex:1">
+                    <label>Hora Inicio:</label>
+                    <input type="time" id="ini">
+                </div>
+                <div style="flex:1">
+                    <label>Hora Fin:</label>
+                    <input type="time" id="fin">
+                </div>
+            </div>
+            
+            <button class="btn btn-add" onclick="añadir()">REGISTRAR TRABAJO</button>
+        </div>
+
+        <h3 style="border-bottom: 1px solid #000; padding-bottom: 5px; font-size: 0.9em;">HISTORIAL DE EXPOSICIÓN</h3>
+        <div id="historial"></div>
+
+        <div class="stats-print" id="total-print"></div>
+
+        <button class="btn btn-pdf" onclick="window.print()">📄 GENERAR DOCUMENTO PDF</button>
+        <!-- NUEVOS BOTONES DE GUARDADO / CARGA -->
+        <button class="btn btn-pdf" onclick="exportarDatos()">💾 GUARDAR DATOS EN DISPOSITIVO</button>
+        <input type="file" id="importFile" style="display:none" accept=".json" onchange="importarDatos(event)">
+        <button class="btn btn-pdf" onclick="document.getElementById('importFile').click()">📂 CARGAR DATOS DESDE DISPOSITIVO</button>
+
+        <button onclick="borrarTodo()" style="width:100%; background:none; border:none; color:#777; margin-top:10px; font-size:0.7em; cursor:pointer; text-decoration:underline;">Borrar todos los registros</button>
+
+       <div class="nota-reivindicativa">
+    <h4>🚩 NOTA REIVINDICATIVA - CGT JARDINERÍA</h4>
+    <p>Desde la <strong>CGT</strong> recordamos que la peligrosidad y penosidad en trabajos de jardinería no son negociables y tienen reconocimiento legal y convencional. La empresa debe evaluar correctamente los riesgos y no puede usar medidas preventivas para negar los derechos de los trabajadores.</p>
+    <ul>
+        <li><strong>Normativa de Prevención:</strong> La <strong>Ley 31/1995 de Prevención de Riesgos Laborales</strong> obliga a la empresa a evaluar riesgos y adoptar medidas de protección. Los <strong>Reales Decretos 773/1997 y 1215/1997</strong> exigen proporcionar EPIs y protección adecuada cuando los riesgos no pueden eliminarse.</li>
+        <li><strong>Peligrosidad en vías de circulación:</strong> El plus puede corresponder cuando el trabajador está expuesto a tránsito o riesgo real en calles, carreteras o bordes viarios. La existencia de vehículos estacionados o tránsito limitado <strong>no excluye la evaluación del riesgo</strong>, que debe hacerse según la tarea concreta y las medidas de seguridad aplicadas, conforme al Artículo 32 del Convenio Estatal de Jardinería y la Ley 31/1995 de Prevención de Riesgos Laborales.</li>
+        <li><strong>Trabajo en taludes y terrenos inestables:</strong> La penosidad y riesgo inherente a estos trabajos se reconoce aunque la empresa suministre arnés, vallas o señalización. La protección reduce el riesgo, pero no elimina el derecho al plus. <span style="background-color: #ffe6e6; font-weight:bold;">El Tribunal Supremo ha reiterado que: "La mejora de las condiciones de seguridad reduce el riesgo, pero mientras el riesgo no desaparezca por completo, el derecho al plus se mantiene".</span></li>
+        <li><strong>Exposición a productos fitosanitarios y trabajos en altura (>1m):</strong> El plus se devenga por la mera exposición o por trabajar a más de un metro de altura. No aceptes criterios de otros sectores que limiten tu derecho.</li>
+    </ul>
+    <p style="font-weight:bold; color:var(--rojo-cgt); text-align:center;">¡PREVENCIÓN ES OBLIGACIÓN, EL PLUS ES TU DERECHO!</p>
+</div>
+<div class="footer">
+    <div class="copyright-screen">© 2026 CGT Jardinería Madrid - Acción Sindical</div>
+    <div class="base-legal">
+        <strong>Base Jurídica:</strong> Registro basado en el <strong>Artículo 32</strong> del Convenio Colectivo vigente (Plus de trabajos tóxicos, penosos o peligrosos). Los importes y fracciones de tiempo se aplican de forma acumulativa según las tablas salariales acordadas por hora o fracción trabajada.
+    </div>
+</div>
+
+<script>
+    const VAL_DIA = 14.42;
+    const VAL_HORA_O_FRACCION_MAYOR = 1.92;
+    const VAL_FRACCION_MENOR = 0.99;
+
+    let registros = JSON.parse(localStorage.getItem('cgt_art32_v5')) || [];
+    document.getElementById('fecha').valueAsDate = new Date();
+
+    function añadir() {
+        const fecha = document.getElementById('fecha').value;
+        const tarea = document.getElementById('tarea').value;
+        const h1 = document.getElementById('ini').value;
+        const h2 = document.getElementById('fin').value;
+
+        if (!tarea || !h1 || !h2) return alert("Faltan datos");
+
+        const inicio = new Date(`2000-01-01T${h1}`);
+        const fin = new Date(`2000-01-01T${h2}`);
+        let minutos = (fin - inicio) / 60000;
+
+        if (minutos <= 0) return alert("La hora de fin debe ser posterior");
+
+        let valorCalculado = 0;
+        let desgloseStr = "";
+
+        if (minutos < 30) {
+            valorCalculado = VAL_FRACCION_MENOR;
+            desgloseStr = "Fracción < 30min";
+        } 
+        else {
+            let numBloquesGrandes = Math.floor(minutos / 60);
+            let restoMinutos = minutos % 60;
+            valorCalculado = numBloquesGrandes * VAL_HORA_O_FRACCION_MAYOR;
+
+            if (restoMinutos >= 30) {
+                valorCalculado += VAL_HORA_O_FRACCION_MAYOR;
+                desgloseStr = `${numBloquesGrandes}h + 1 Fracc. >30min`;
+            } else if (restoMinutos > 0) {
+                valorCalculado += VAL_FRACCION_MENOR;
+                desgloseStr = `${numBloquesGrandes}h + 1 Fracc. <30min`;
+            } else {
+                desgloseStr = `${numBloquesGrandes}h completas`;
+            }
+        }
+
+        if (valorCalculado > VAL_DIA) {
+            valorCalculado = VAL_DIA;
+            desgloseStr = "Tope: Día Completo";
+        }
+
+        registros.push({ id: Date.now(), fecha, tarea, h1, h2, minutos, valorCalculado, desgloseStr });
+        localStorage.setItem('cgt_art32_v5', JSON.stringify(registros));
+        
+        document.getElementById('tarea').value = "";
+        mostrar();
+    }
+
+    function mostrar() {
+        const lista = document.getElementById('historial');
+        const totalDisp = document.getElementById('total-acumulado');
+        const totalPrint = document.getElementById('total-print');
+        lista.innerHTML = "";
+        let total = 0;
+
+        registros.sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+
+        registros.forEach(r => {
+            total += r.valorCalculado;
+            lista.innerHTML += `
+                <div class="log-item">
+                    <div class="info-tramo">
+                        <strong>${r.fecha.split('-').reverse().join('/')}</strong> | ${r.h1}-${r.h2}<br>
+                        <span>${r.tarea}</span><br>
+                        <small style="color:#666">${r.minutos} min (${r.desgloseStr})</small>
+                    </div>
+                    <div style="display:flex; align-items:center;">
+                        <span class="precio-tramo">${r.valorCalculado.toFixed(2)}€</span>
+                        <button class="btn-del" onclick="borrar(${r.id})">✕</button>
+                    </div>
+                </div>
+            `;
+        });
+        totalDisp.innerText = total.toFixed(2) + " €";
+        totalPrint.innerText = "TOTAL A PERCIBIR: " + total.toFixed(2) + " €";
+    }
+
+    function borrar(id) {
+        if(confirm("¿Eliminar este tramo?")) {
+            registros = registros.filter(r => r.id !== id);
+            localStorage.setItem('cgt_art32_v5', JSON.stringify(registros));
+            mostrar();
+        }
+    }
+
+    function borrarTodo() {
+        if (confirm("¿Borrar todos los datos acumulados?")) {
+            registros = [];
+            localStorage.removeItem('cgt_art32_v5');
+            mostrar();
+        }
+    }
+
+    // NUEVAS FUNCIONES: Exportar e Importar datos
+    function exportarDatos() {
+        if (registros.length === 0) return alert("No hay registros para guardar");
+        const dataStr = JSON.stringify(registros, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `cgt_art32_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function importarDatos(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const datosImportados = JSON.parse(e.target.result);
+                if (!Array.isArray(datosImportados)) throw new Error("Archivo no válido");
+                registros = datosImportados;
+                localStorage.setItem('cgt_art32_v5', JSON.stringify(registros));
+                mostrar();
+                alert("Datos importados correctamente");
+            } catch(err) {
+                alert("Error al cargar el archivo: " + err.message);
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = "";
+    }
+
+    mostrar();
+</script>
+</body>
+</html>

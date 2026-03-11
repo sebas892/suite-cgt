@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HERRAMIENTA ANTI-ACOSO CGT - Jardinería Madrid</title>
+    <style>
+        :root { --rojo-cgt: #E30613; --negro: #1a1a1a; --azul-seguro: #0d47a1; --violeta: #7b1fa2; --verde-legal: #2e7d32; --alerta: #ff9800; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #d1d5db; margin: 0; padding: 10px; padding-bottom: 120px; }
+        .main-container { max-width: 600px; margin: auto; }
+
+        /* BOTÓN DE PÁNICO DISCRETO */
+        .panic-btn { position: fixed; bottom: 20px; right: 20px; background: #546e7a; color: white; border: none; border-radius: 50%; width: 75px; height: 75px; font-weight: bold; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.5); z-index: 9999; font-size: 0.8em; text-transform: uppercase; border: 3px solid white; }
+
+        .header-sindical { text-align: center; margin-bottom: 20px; border-bottom: 4px solid var(--rojo-cgt); padding: 15px; background: white; border-radius: 0 0 15px 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header-sindical h2 { color: var(--rojo-cgt); margin: 0; font-size: 1.3em; text-transform: uppercase; }
+
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 20px; border-top: 6px solid var(--negro); }
+        h3 { margin-top: 0; font-size: 1.2em; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
+
+        .helper-text { font-size: 0.95em; color: #444; margin-bottom: 15px; line-height: 1.5; background: #f0f4f8; padding: 12px; border-radius: 8px; border-left: 5px solid var(--azul-seguro); }
+
+        /* CASILLAS Y PANELES INTERACTIVOS */
+        .check-item { display: flex; align-items: flex-start; gap: 12px; padding: 15px; border-radius: 8px; margin-bottom: 5px; border: 1px solid #ddd; background: #fff; transition: 0.2s; }
+        .check-item input { width: 26px; height: 26px; cursor: pointer; flex-shrink: 0; margin-top: 2px; }
+        .check-item label { font-size: 1em; cursor: pointer; line-height: 1.4; color: #333; font-weight: 500; }
+
+        .action-panel { display: none; background: #fffde7; border: 1px solid #ffe082; padding: 15px; border-radius: 0 0 8px 8px; margin-top: -10px; margin-bottom: 15px; border-top: none; animation: slideDown 0.3s ease-out; }
+        .action-panel p { margin: 0 0 12px 0; font-size: 0.95em; font-weight: bold; color: #5d4037; }
+        
+        .btn-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .btn-action { display: inline-flex; align-items: center; justify-content: center; padding: 10px 14px; border-radius: 6px; border: none; color: white; font-weight: bold; font-size: 0.85em; cursor: pointer; text-decoration: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .btn-add { background: var(--azul-seguro); }
+        .btn-call { background: var(--rojo-cgt); }
+        .btn-violet { background: var(--violeta); }
+        .btn-emer { background: var(--negro); }
+
+        /* GUÍA DE AUTODEFENSA */
+        .guia-box { background: #e8f5e9; border: 2px solid var(--verde-legal); border-radius: 12px; padding: 20px; margin-bottom: 25px; }
+        .guia-step { margin-bottom: 18px; padding-left: 40px; position: relative; font-size: 1em; line-height: 1.5; color: #1b5e20; }
+        .guia-step b { color: var(--negro); display: block; margin-bottom: 4px; font-size: 1.1em; }
+        .guia-num { position: absolute; left: 0; top: 0; background: var(--verde-legal); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
+        /* SECCIONES ESPECIALES */
+        .card-violeta { border-top-color: var(--violeta); background: #fdf7ff; }
+        .card-violeta h3 { color: var(--violeta); }
+        .info-box { font-size: 0.9em; padding: 15px; border-radius: 8px; margin-top: 15px; line-height: 1.6; font-weight: 500; }
+        .info-roja { background: #ffebee; color: #b71c1c; border: 1px solid #ef9a9a; }
+        .info-violeta { background: #f3e5f5; color: #4a148c; border: 1px solid #d1c4e9; }
+
+        textarea { width: 100%; height: 130px; padding: 12px; border: 2px solid #ccc; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-size: 1em; margin-top: 10px; }
+        .input-data { width: 100%; padding: 12px; margin-bottom: 10px; border: 2px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 1em; }
+        .btn-main { width: 100%; padding: 20px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 1.1em; background: #25D366; color: white; box-shadow: 0 5px #128C7E; margin-top: 15px; }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        footer { text-align: center; font-size: 0.9em; color: #444; padding: 40px 20px; line-height: 1.6; border-top: 1px solid #bbb; margin-top: 30px; }
+    </style>
+</head>
+<body>
+
+<button class="panic-btn" onclick="panicMode()">SALIR<br>RÁPIDO</button>
+
+<div class="main-container">
+    <div class="header-sindical">
+        <img src="https://lh3.googleusercontent.com/d/1CButBy2GeflsQPx8FKWMT3yDjo2NvfNw" alt="Logo CGT" style="max-width: 70px; margin-bottom: 10px;">
+        <h2>HERRAMIENTA ANTI-ACOSO CGT</h2>
+    </div>
+
+    <div class="card">
+        <h3>🔍 1. IDENTIFICA EL ACOSO (MOBBING)</h3>
+        <div class="helper-text">
+            ¿Qué es el Mobbing? Es la violencia psicológica continuada en el trabajo. Para que sea legalmente "acoso", debe ser sistemático. Marca lo que sufres para generar el historial:
+        </div>
+        
+        <div class="check-group">
+            <div class="check-item">
+                <input type="checkbox" onchange="togglePanel('p1', this)">
+                <label><strong>Aislamiento operativo:</strong> Me ocultan datos, órdenes o herramientas necesarias para que no pueda cumplir mis objetivos.</label>
+            </div>
+            <div id="p1" class="action-panel">
+                <p>⚠️ Boicot laboral. Deja constancia ahora mismo:</p>
+                <div class="btn-group">
+                    <button class="btn-action btn-add" onclick="autoRedact('INCIDENCIA: Aislamiento operativo (Ocultación de medios para trabajar).')">📝 Añadir al Reporte</button>
+                    <a href="tel:000000000" class="btn-action btn-call">📞 Hablar con Delegado</a>
+                </div>
+            </div>
+
+            <div class="check-item">
+                <input type="checkbox" onchange="togglePanel('p2', this)">
+                <label><strong>Ataque a la dignidad:</strong> Gritos, insultos, burlas sobre mi trabajo o vida privada delante de la cuadrilla o usuarios.</label>
+            </div>
+            <div id="p2" class="action-panel">
+                <p>🛑 Agresión verbal detectada. ¿Quién lo ha visto? Anótalo:</p>
+                <div class="btn-group">
+                    <button class="btn-action btn-add" onclick="autoRedact('INCIDENCIA: Ataque a la dignidad (Gritos e insultos públicos).')">📝 Añadir al Reporte</button>
+                    <a href="tel:000000000" class="btn-action btn-call">📞 Urgente: Delegado</a>
+                </div>
+            </div>
+
+            <div class="check-item">
+                <input type="checkbox" onchange="togglePanel('p3', this)">
+                <label><strong>Vaciado de funciones:</strong> Me obligan a hacer tareas inútiles, degradantes o me dejan sin nada que hacer para hundirme.</label>
+            </div>
+            <div id="p3" class="action-panel">
+                <p>⚖️ Esto daña tu salud. Es una modificación de condiciones:</p>
+                <div class="btn-group">
+                    <button class="btn-action btn-add" onclick="autoRedact('INCIDENCIA: Vaciado de funciones o tareas degradantes.')">📝 Añadir al Reporte</button>
+                    <a href="tel:000000000" class="btn-action btn-call">📞 Asesoría Jurídica</a>
+                </div>
+            </div>
+
+            <div class="check-item">
+                <input type="checkbox" onchange="togglePanel('p4', this)">
+                <label><strong>Aislamiento social:</strong> Me prohíben hablar con otros compañeros o me asignan zonas deliberadamente lejos de todos.</label>
+            </div>
+            <div id="p4" class="action-panel">
+                <p>⚠️ Intentan romper tu red de apoyo. No permitas el aislamiento.</p>
+                <button class="btn-action btn-add" onclick="autoRedact('INCIDENCIA: Aislamiento social y físico forzado en el tajo.')">📝 Añadir al Reporte</button>
+            </div>
+
+            <div class="check-item">
+                <input type="checkbox" onchange="togglePanel('p5', this)">
+                <label><strong>Presión disciplinaria:</strong> Me amenazan continuamente con sanciones, expedientes o con el despido si no cedo a sus presiones.</label>
+            </div>
+            <div id="p5" class="action-panel">
+                <p>🚨 Alerta sanción. No firmes NADA "No Conforme" sin presencia de un delegado.</p>
+                <div class="btn-group">
+                    <button class="btn-action btn-add" onclick="autoRedact('INCIDENCIA: Presión disciplinaria y amenazas de despido constantes.')">📝 Añadir al Reporte</button>
+                    <a href="tel:000000000" class="btn-action btn-call">📞 Urgente: Sindical</a>
+                </div>
+            </div>
+
+            <div class="check-item" style="border-left: 6px solid #b71c1c; background: #fff5f5;">
+                <input type="checkbox" onchange="togglePanel('p6', this)">
+                <label><strong>Agresión Física:</strong> Empujones, zarandeos o cualquier tipo de contacto violento por parte de mandos o compañeros.</label>
+            </div>
+            <div id="p6" class="action-panel" style="background: #ffebee; border-color: #ef9a9a;">
+                <p>🚨 ¡ALERTA ROJA! Esto es un delito penal inmediato. Abandona el lugar.</p>
+                <div class="btn-group">
+                    <button class="btn-action btn-add" onclick="autoRedact('ALERTA ROJA: Agresión física sufrida en el puesto de trabajo.')">📝 Registrar para Denuncia</button>
+                    <a href="tel:112" class="btn-action btn-emer">📞 EMERGENCIA 112</a>
+                    <a href="tel:000000000" class="btn-action btn-call">📞 Llamar Delegado/a</a>
+                </div>
+            </div>
+        </div>
+        <div class="info-box info-roja">
+            Nota Jurídica: Según el Art. 173 del Código Penal, el acoso laboral es delito. Registra cada vez que ocurra; la recurrencia es tu prueba principal.
+        </div>
+    </div>
+
+    <div class="card card-violeta">
+        <h3>💜 2. PROTOCOLO VIOLETA (ACOSO SEXUAL)</h3>
+        <div class="helper-text">
+            Acoso Sexual o Sexista: No requiere repetición; un solo acto puede ser delito. El consentimiento debe ser el centro. Si te sientes agredida, marca aquí:
+        </div>
+        
+        <div class="check-group">
+            <div class="check-item">
+                <input type="checkbox" onchange="togglePanel('pv1', this)">
+                <label><strong>Acoso Sexista:</strong> Comentarios degradantes sobre mi cuerpo, chistes machistas o menosprecio profesional por ser mujer.</label>
+            </div>
+            <div id="pv1" class="action-panel" style="background:#f3e5f5;">
+                <p>💜 Es acoso por razón de sexo. Estás protegida por la Ley de Igualdad.</p>
+                <div class="btn-group">
+                    <button class="btn-action btn-violet" onclick="autoRedact('ALERTA VIOLETA: Comentarios sexistas y trato vejatorio.')">📝 Añadir al Reporte</button>
+                    <a href="tel:016" class="btn-action btn-emer">📞 016 (Confidencial)</a>
+                </div>
+            </div>
+
+            <div class="check-item">
+                <input type="checkbox" onchange="togglePanel('pv2', this)">
+                <label><strong>Acoso Sexual Físico:</strong> Tocamientos, roces innecesarios, besos o abrazos no deseados e invasión de mi espacio personal.</label>
+            </div>
+            <div id="pv2" class="action-panel" style="background:#f3e5f5;">
+                <p>🚨 ¡URGENTE! Esto es una agresión física. Tu seguridad es lo primero.</p>
+                <div class="btn-group">
+                    <button class="btn-action btn-violet" onclick="autoRedact('ALERTA VIOLETA: Contacto físico no consentido detectado.')">📝 Añadir al Reporte</button>
+                    <a href="tel:112" class="btn-action btn-call">📞 EMERGENCIA 112</a>
+                    <a href="tel:000000000" class="btn-action btn-violet">📞 Delegada Mujer</a>
+                </div>
+            </div>
+
+            <div class="check-item">
+                <input type="checkbox" onchange="togglePanel('pv3', this)">
+                <label><strong>Chantaje Sexual:</strong> Proposiciones directas o indirectas vinculando favores sexuales a beneficios o mantenimiento del empleo.</label>
+            </div>
+            <div id="pv3" class="action-panel" style="background:#f3e5f5;">
+                <p>🆘 Estás ante un chantaje delictivo grave. No cedas. Informa a CGT.</p>
+                <div class="btn-group">
+                    <button class="btn-action btn-violet" onclick="autoRedact('ALERTA VIOLETA: Chantaje sexual vinculado a condiciones laborales.')">📝 Añadir al Reporte</button>
+                    <a href="tel:000000000" class="btn-action btn-call">📞 Hablar con Sindicato</a>
+                </div>
+            </div>
+        </div>
+        <div class="info-box info-violeta">
+            EMERGENCIA: Si hay riesgo de agresión física, abandona el tajo. El Art. 21 de la LPRL te permite interrumpir la actividad si hay riesgo grave e inminente para tu integridad.
+        </div>
+    </div>
+
+    <div class="guia-box">
+        <h3>📚 GUÍA DE AUTODEFENSA </h3>
+        
+        <div class="guia-step"><div class="guia-num">1</div><b>REGISTRO TOTAL:</b> No confíes en tu memoria. Anota cada grito o boicot en esta herramienta indicando quién, cuándo y dónde. La "recurrencia" es tu mejor prueba jurídica en Mobbing.</div>
+        
+        <div class="guia-step"><div class="guia-num">2</div><b>BUSCA TESTIGOS:</b> Mira quién ha escuchado el insulto o ha visto el boicot. Sus nombres son fundamentales para corroborar los hechos ante una inspección o juzgado.</div>
+        
+        <div class="guia-step"><div class="guia-num">3</div><b>INFORMA A CGT:</b> Envía este reporte a tu delegado/a de confianza. El acoso prospera en el silencio y el aislamiento; la acción sindical colectiva es lo único que lo frena.</div>
+        
+        <div class="guia-step"><div class="guia-num">4</div><b>CUIDA TU SALUD:</b> Si sientes ansiedad, insomnio o miedo, acude a tu médico. Pide que conste que el origen es laboral para tramitar la baja como accidente de trabajo.</div>
+    </div>
+
+    <div class="card" style="border-top-color: var(--rojo-cgt);">
+        <h3>📝 4. GENERADOR DE EVIDENCIAS</h3>
+        <input type="text" id="testigos" class="input-data" placeholder="¿Dónde ha sido? ¿Quién lo ha visto? (Testigos)">
+        <textarea id="descripcion" placeholder="Describe aquí los hechos..."></textarea>
+        <button class="btn-main" onclick="enviarReporte()">📲 ENVIAR REPORTE A WHATSAPP</button>
+    </div>
+
+    <footer>
+        <strong>CGT JARDINERÍA MADRID </strong><br>
+        Protección basada en Art. 4.2 ET, Art. 173 CP y Ley de Igualdad.<br>
+        <em>Esta herramienta no guarda datos. La información se genera en tu móvil para que tú decidas a quién enviarla.</em>
+    </footer>
+</div>
+
+<script>
+    function panicMode() {
+        window.location.replace("https://www.aemet.es/es/eltiempo/prediccion/municipios/madrid-id28079");
+    }
+
+    function togglePanel(id, cb) {
+        document.getElementById(id).style.display = cb.checked ? "block" : "none";
+    }
+
+    function autoRedact(texto) {
+        const area = document.getElementById('descripcion');
+        if (!area.value.includes(texto)) {
+            area.value += (area.value ? "\n" : "") + texto;
+            alert("Información añadida correctamente.");
+        }
+    }
+
+    function enviarReporte() {
+        const fecha = new Date().toLocaleString();
+        const testigos = document.getElementById('testigos').value || "No identificados";
+        const detalles = document.getElementById('descripcion').value;
+        if (!detalles) { alert("Por favor, marca alguna casilla o describe lo ocurrido."); return; }
+        let msg = `*REPORTE CGT JARDINERÍA*%0A*FECHA:* ${fecha}%0A%0A*HECHOS:*%0A${detalles}%0A%0A*TESTIGOS:* ${testigos}`;
+        window.open(`https://wa.me/?text=${msg}`);
+    }
+</script>
+</body>
+</html>

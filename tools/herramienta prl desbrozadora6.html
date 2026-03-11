@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trabajo seguro con desbrozadoras - CGT Jardinería Madrid</title>
+    <style>
+        :root { --rojo-cgt: #E30613; --negro: #1a1a1a; --verde-ok: #2e7d32; --azul-relax: #0277bd; --alerta: #ff9800; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #d1d5db; margin: 0; padding: 10px; }
+        .main-container { max-width: 600px; margin: auto; }
+        
+        .header-sindical { text-align: center; margin-bottom: 20px; border-bottom: 3px solid var(--rojo-cgt); padding-bottom: 10px; background: white; border-radius: 0 0 12px 12px; padding-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header-sindical img { max-width: 100px; height: auto; }
+        .header-sindical h1 { font-size: 1.2em; margin: 10px 0 5px 0; color: var(--negro); text-transform: uppercase; }
+        .header-sindical h2 { font-size: 1.4em; margin: 0; color: var(--rojo-cgt); border: none; padding: 0; }
+
+        .card { background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-top: 6px solid var(--rojo-cgt); padding: 20px; margin-bottom: 20px; }
+        h2 { text-align: center; margin-top: 0; color: var(--negro); font-size: 1.1em; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        
+        .check-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; }
+        .detalles-check { font-size: 0.85em; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .detalles-check summary { color: #1976d2; font-weight: bold; cursor: pointer; padding: 2px 0; outline: none; }
+        .detalles-check div { background: #f1f8ff; padding: 12px; border-radius: 4px; margin-top: 5px; line-height: 1.5; color: #333; border: 1px solid #d1e9ff; }
+
+        .status-msg { padding: 15px; border-radius: 6px; margin-top: 15px; font-weight: normal; text-align: left; display: none; line-height: 1.4; font-size: 0.9em; }
+        
+        #timer-display { font-size: 3em; text-align: center; font-weight: bold; color: var(--negro); margin: 10px 0; }
+        .btn-timer { width: 100%; padding: 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; margin-bottom: 5px; }
+        .btn-start { background: var(--verde-ok); }
+        .btn-stop { background: var(--rojo-cgt); }
+        .btn-cooldown { background: var(--azul-relax); cursor: not-allowed; }
+
+        /* Estilos añadidos para el registro */
+        .monitor-aviso { background: #fff3e0; border-left: 4px solid var(--alerta); padding: 10px; font-size: 0.85em; margin: 10px 0; display: none; }
+        .tabla-registro { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.75em; text-align: center; }
+        .tabla-registro th { background: #eee; padding: 5px; border-bottom: 2px solid #ddd; }
+        .tabla-registro td { padding: 8px; border-bottom: 1px solid #eee; }
+        .total-box { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding: 10px; background: #f5f5f5; border-radius: 6px; font-weight: bold; }
+
+        .epi-select { width: 100%; padding: 10px; margin-bottom: 10px; }
+        .guia-box { background: #f9f9f9; border-left: 4px solid var(--negro); padding: 10px; font-size: 0.9em; display: none; white-space: pre-line; }
+
+        .btn-report { background: var(--negro); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; margin-top: 10px; cursor: pointer; font-weight: bold; }
+        .btn-sindical { background: #333; color: gold; border: 2px solid gold; padding: 12px; width: 100%; border-radius: 6px; margin-top: 10px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+        
+        .info-acotacion { background: #e3f2fd; padding: 12px; border-radius: 6px; font-size: 0.9em; margin-bottom: 10px; border-left: 4px solid #1976d2; }
+        .desplegable-responsabilidad { margin-top: 10px; font-size: 0.85em; }
+        .desplegable-responsabilidad summary { font-weight: bold; color: #1976d2; cursor: pointer; padding: 5px 0; }
+        .texto-responsabilidad { padding: 12px; background: #f1f8ff; border: 1px solid #1976d2; margin-top: 5px; border-radius: 4px; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    
+    <div class="header-sindical">
+        <img src="https://lh3.googleusercontent.com/d/1CButBy2GeflsQPx8FKWMT3yDjo2NvfNw" alt="Logo CGT">
+        <h1>Trabajo seguro con desbrozadoras</h1>
+        <h2>CGT Jardinería Madrid</h2>
+    </div>
+
+    <div class="card" style="border-top-color: #2196f3;">
+        <h2>📍 ACOTACIÓN Y SEÑALIZACIÓN</h2>
+        <div class="info-acotacion">
+            <strong>Normativa Municipal:</strong> Es obligatorio el balizamiento efectivo del área con precinto (cinta) y conos, además de cartelería de "Trabajos de Jardinería".
+        </div>
+        
+        <details class="desplegable-responsabilidad">
+            <summary>¿Quién es el responsable de poner el cordón? (Información Detallada)</summary>
+            <div class="texto-responsabilidad">
+                La <strong>empresa contratista</strong> es la única responsable de garantizar que la zona está segura y acotada ANTES de que comiences a trabajar.
+                <br><br>
+                <strong>Tu labor como operario:</strong> Tu cometido es el manejo seguro de la desbrozadora. Tú NO debes dedicarte a colocar cintas, conos ni realizar labores de vigilancia de terceros mientras desbrozas. 
+                <br><br>
+                La empresa debe organizar preventivamente el trabajo para que tú te centres exclusivamente en tu tarea, asignando personal auxiliar o recursos preventivos para la acotación si fuera necesario.
+            </div>
+        </details>
+    </div>
+
+    <div class="card">
+        <h2>1. VALIDACIÓN PREVENTIVA</h2>
+        <p style="font-size: 0.8em; color: #666;">Antes de arrancar, verifica las condiciones legales.</p>
+        
+        <div class="check-item"><span>¿Zona señalizada/vallada por empresa?</span> <input type="checkbox" class="seg-check"></div>
+        <details class="detalles-check">
+            <summary>Información detallada sobre señalización</summary>
+            <div>
+                <strong>El estándar de seguridad:</strong> La zona de trabajo debe estar delimitada físicamente. Se debe usar cinta de balizamiento, conos y cartelería específica de "Trabajos de Jardinería" que avise del riesgo de proyecciones.<br><br>
+                <strong>La distancia legal:</strong> El radio de seguridad es de 15 metros. Si por la configuración del terreno (aceras estrechas o parques concurridos) no se garantizan, la empresa debe proveer medidas adicionales como pantallas físicas o personal auxiliar de vigilancia.<br><br>
+                <strong>Argumento de defensa:</strong> Si un viandante resulta herido y la zona no estaba correctamente precintada por la empresa, la responsabilidad legal recae sobre la organización preventiva de la empresa, no sobre el operario.
+            </div>
+        </details>
+
+        <div class="check-item"><span>¿Tienes todos los EPIs (Pantalón, etc.)?</span> <input type="checkbox" class="seg-check"></div>
+        <details class="detalles-check">
+            <summary>Información detallada sobre tus EPIs</summary>
+            <div>
+                <strong>Pantalla Facial Transparente:</strong> Debe cumplir la Norma EN 166 (policarbonato) para proteger contra impactos de alta velocidad. Debe estar limpia y sin arañazos para evitar fatiga ocular.<br><br>
+                <strong>Guantes de Protección:</strong> El guante de borreguillo actual solo protege contra roces básicos. Según el <strong>RD 1311/2005</strong>, si la exposición diaria a vibraciones supera los 2,5 m/s², la empresa debe proporcionar guantes antivibración (EN ISO 10819). Superar los 5 m/s² es un riesgo prohibido sin medidas.<br><br>
+                <strong>Pantalón de protección (Uso de Hilo):</strong> El riesgo principal con hilo son las proyecciones constantes. El pantalón debe ser de material resistente y estar en buen estado. Si la tela está degradada, pierde su capacidad técnica.<br><br>
+                <strong>Protección Respiratoria (Mascarilla FFP2):</strong> Obligatoria para filtrar el polvo, polen y partículas en suspensión generadas por el desbroce. Si se humedece o satura, debe sustituirse inmediatamente.<br><br>
+                <strong>Protección Auditiva:</strong> Es obligatorio el uso de protectores (cascos o tapones) con el nivel de atenuación adecuado al motor que estés usando.<br><br>
+                <strong>Gratuidad (Art. 7 RD 773/1997):</strong> La empresa debe proporcionarlos gratis y reponerlos por deterioro.
+            </div>
+        </details>
+
+        <div class="check-item"><span>¿Máquina revisada y con protectores?</span> <input type="checkbox" class="seg-check"></div>
+        <details class="detalles-check">
+            <summary>Información detallada sobre la máquina</summary>
+            <div>
+                <strong>Protector del cabezal (Faldón):</strong> Pieza crítica al usar hilo. Debe llevar la cuchilla integrada y estar en perfecto estado. Nunca trabajes sin él o recortado, es lo que detiene las proyecciones hacia tu cuerpo.<br><br>
+                <strong>Estado del cabezal de hilo:</strong> Sin grietas y con el grosor de hilo adecuado. Un cabezal dañado puede desintegrarse por la fuerza centrífuga.<br><br>
+                <strong>Mandos y Seguridad:</strong> El interruptor de parada debe ser instantáneo y el gatillo debe tener el fiador operativo.<br><br>
+                <strong>Arnés y Vibración:</strong> Los silentblocks deben estar sanos. El arnés debe estar ajustado para repartir el peso y tener el sistema de desenganche rápido operativo para emergencias.
+            </div>
+        </details>
+
+        <div class="check-item"><span>¿Conoces el plan de emergencia?</span> <input type="checkbox" class="seg-check"></div>
+        <details class="detalles-check">
+            <summary>Información detallada sobre emergencias</summary>
+            <div>
+                <strong>Identificación del Recurso Preventivo:</strong> Debes saber quién es la persona designada hoy y cómo contactarla. La empresa debe asegurar que no trabajas en aislamiento total sin comunicación.<br><br>
+                <strong>Protocolo PAS:</strong> Ante accidente, primero Protege (apaga máquina), Avisa (112 y empresa) y Socorre.<br><br>
+                <strong>Ubicación del Botiquín:</strong> Confirma que el vehículo de apoyo tiene el botiquín reglamentario accesible.<br><br>
+                <strong>Derecho de Protección (Art. 21 LPRL):</strong> Si detectas un riesgo grave e inminente (rotura peligrosa de máquina, etc.), tienes derecho legal a interrumpir la actividad y comunicarlo sin sanciones.
+            </div>
+        </details>
+        
+        <button class="btn-report" onclick="verificarSeguridad()">VERIFICAR CONDICIONES</button>
+        <div id="status-seg" class="status-msg"></div>
+    </div>
+
+    <div class="card">
+        <h2>2. CONTROL DE EXPOSICIÓN (RUIDO/VIBRACIÓN)</h2>
+        <p style="font-size: 0.8em; color: #666;">Basado en la necesidad de rotación y descansos.</p>
+        <div id="monitor-info" class="monitor-aviso"></div>
+        <div id="timer-display">45:00</div>
+        <button id="timer-btn" class="btn-timer btn-start" onclick="toggleTimer()">INICIAR TURNO DESBROCE</button>
+        
+        <table class="tabla-registro">
+            <thead>
+                <tr>
+                    <th>Inicio</th>
+                    <th>Fin</th>
+                    <th>Trabajo</th>
+                    <th>Pausa Real</th>
+                </tr>
+            </thead>
+            <tbody id="historial-body"></tbody>
+        </table>
+        
+        <div class="total-box">
+            <span>EXPOSICIÓN TOTAL DÍA:</span>
+            <span id="total-acumulado">0 min</span>
+        </div>
+        <p style="font-size: 0.75em; text-align: center;">Recomendado: Rotar o descansar cada 45-60 min para prevenir fatiga.</p>
+    </div>
+
+    <div class="card">
+        <h2>3. VALIDADOR DE ETIQUETAS EPI</h2>
+        <p style="font-size: 0.8em; color: #666;">Comprueba si tu equipo cumple la normativa.</p>
+        <select class="epi-select" id="epi-guia" onchange="mostrarGuia()">
+            <option value="">-- Selecciona un equipo --</option>
+            <option value="pantalones">Pantalón Anticorte</option>
+            <option value="botas">Calzado de Seguridad</option>
+            <option value="auditiva">Protección Auditiva</option>
+            <option value="facial">Protector Facial (Desbroce)</option>
+            <option value="guantes">Guantes de Seguridad</option>
+        </select>
+        <div id="guia-detalles" class="guia-box"></div>
+    </div>
+
+    <div class="card" style="border-top-color: gold;">
+        <h2>4. ASISTENCIA SINDICAL</h2>
+        <button class="btn-sindical" onclick="llamarDelegado()">📞 LLAMAR A DELEGADO/A CGT</button>
+    </div>
+
+    <footer style="text-align: center; font-size: 0.7em; color: #777; padding: 10px;">
+        C.G.T. JARDINERÍA - Referencias: RD 773/1997, RD 1215/1997, LPRL 31/1995.
+    </footer>
+</div>
+
+<script>
+    function verificarSeguridad() {
+        const checks = document.querySelectorAll('.seg-check');
+        const status = document.getElementById('status-seg');
+        let todasOk = true;
+        checks.forEach(c => { if(!c.checked) todasOk = false; });
+
+        status.style.display = 'block';
+        if(todasOk) {
+            status.style.backgroundColor = '#e8f5e9';
+            status.style.color = 'var(--verde-ok)';
+            status.innerHTML = "✅ <strong>Condiciones aptas:</strong> Las medidas de seguridad mínimas coinciden con lo establecido legalmente. Trabaja con precaución.";
+        } else {
+            status.style.backgroundColor = '#ffebee';
+            status.style.color = 'var(--rojo-cgt)';
+            status.innerHTML = `
+                <strong>⚠️ INSUFICIENCIA DE SEGURIDAD DETECTADA</strong><br><br>
+                Según el <strong>Art. 14 de la LPRL</strong>, tienes derecho a una protección eficaz. Si faltan medidas:<br>
+                1. <strong>Informa de inmediato</strong> a tu responsable directo para que subsane estas carencias antes de iniciar la tarea.<br>
+                2. El <strong>Art. 21 de la LPRL</strong> te ampara ante riesgos graves e inminentes.<br><br>
+                Si tienes dudas o sufres presión para trabajar sin seguridad, <strong>contacta con tus representantes de CGT</strong> mediante el botón inferior de esta herramienta.
+            `;
+        }
+    }
+
+    let timer;
+    let seconds = 45 * 60;
+    let modo = "reposo"; // reposo, trabajo, cooldown
+    let startTime, lastEndTime, totalMins = 0;
+
+    function activarAlarma() {
+        if ('speechSynthesis' in window) {
+            const mensaje = new SpeechSynthesisUtterance("Atención, tiempo de desbroce finalizado. Realice la rotación de seguridad.");
+            mensaje.lang = 'es-ES';
+            window.speechSynthesis.speak(mensaje);
+        }
+        const context = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = context.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, context.currentTime);
+        osc.connect(context.destination);
+        osc.start();
+        osc.stop(context.currentTime + 1);
+    }
+
+    function toggleTimer() {
+        const btn = document.getElementById('timer-btn');
+        const monitor = document.getElementById('monitor-info');
+        const now = new Date();
+
+        if(modo === "reposo") {
+            modo = "trabajo";
+            startTime = now;
+            btn.innerText = "PARAR / DESCANSAR";
+            btn.className = "btn-timer btn-stop";
+            monitor.style.display = "none";
+            timer = setInterval(() => {
+                seconds--;
+                actualizarDisplay();
+                if(seconds <= 0) {
+                    finalizarTurno();
+                    activarAlarma();
+                    alert("TIEMPO LÍMITE: Es necesaria la rotación o descanso según plan de prevención.");
+                }
+            }, 1000);
+        } else if (modo === "trabajo") {
+            finalizarTurno();
+        }
+    }
+
+    function finalizarTurno() {
+        clearInterval(timer);
+        const endTime = new Date();
+        const durationMins = Math.floor((endTime - startTime) / 60000);
+        
+        // --- INTEGRACIÓN DE TABLA PROGRESIVA ---
+        let descansoNec = 15;
+        if (durationMins < 5) descansoNec = 0;
+        else if (durationMins < 15) descansoNec = 2;
+        else if (durationMins < 25) descansoNec = 5;
+        else if (durationMins < 40) descansoNec = 10;
+        else descansoNec = 15;
+        // ---------------------------------------
+        
+        // Registro en tabla
+        const body = document.getElementById('historial-body');
+        const fila = body.insertRow(0);
+        const fmt = (d) => d.getHours() + ":" + (d.getMinutes()<10?'0':'')+d.getMinutes();
+        let pausaReal = lastEndTime ? Math.floor((startTime - lastEndTime) / 60000) + " min" : "-";
+        
+        fila.insertCell(0).innerText = fmt(startTime);
+        fila.insertCell(1).innerText = fmt(endTime);
+        fila.insertCell(2).innerHTML = `<strong>${durationMins}m</strong>`;
+        fila.insertCell(3).innerText = pausaReal;
+
+        totalMins += durationMins;
+        const totSpan = document.getElementById('total-acumulado');
+        totSpan.innerText = totalMins + " min";
+        if(totalMins > 240) totSpan.style.color = "var(--rojo-cgt)";
+        
+        lastEndTime = endTime;
+
+        // Iniciar Cooldown
+        modo = "cooldown";
+        seconds = descansoNec * 60;
+        const btn = document.getElementById('timer-btn');
+        btn.innerText = "RECUPERACIÓN EN CURSO...";
+        btn.className = "btn-timer btn-cooldown";
+        
+        const monitor = document.getElementById('monitor-info');
+        monitor.style.display = "block";
+        monitor.innerHTML = `<strong>Descanso:</strong> Has trabajado ${durationMins} min. Recomendado parar ${descansoNec} min.`;
+
+        timer = setInterval(() => {
+            seconds--;
+            actualizarDisplay();
+            if(seconds <= 0) {
+                clearInterval(timer);
+                modo = "reposo";
+                seconds = 45 * 60;
+                btn.innerText = "INICIAR NUEVO TURNO";
+                btn.className = "btn-timer btn-start";
+                monitor.innerHTML = "✅ RECUPERACIÓN COMPLETADA.";
+                actualizarDisplay();
+            }
+        }, 1000);
+    }
+
+    function actualizarDisplay() {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        document.getElementById('timer-display').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    const datosEpi = {
+        pantalones: "El operario utilizará pantalones o zahones de protección para desbroce como EPI frente a la proyección de partículas, cumpliendo con la norma UNE-EN ISO 13688 de requisitos generales de ropa de protección y, en su caso, con normas de resistencia mecánica del tejido como EN ISO 13934-1 y EN 863, así como UNE-EN ISO 20471 cuando se requiera alta visibilidad",
+        botas: "Debe incluir: Marcado CE, Norma EN 20345, Resistencia ≥ 200 J y suela antiperforación.",
+        auditiva: "Debe incluir: Marcado CE, nivel de atenuación NRR/SNR y etiqueta de índice de comodidad.",
+        facial: "Protector Facial Específico:\n• Pantalla Transparente: Norma EN 166 (Protección frente a impactos de alta velocidad).\nAmbas deben tener Marcado CE y ser compatibles con el uso de protección auditiva.",
+        guantes: "Mínimo legal (Mecánico): Marcado CE y Norma EN 388 (Pictograma de escudo con 4 números).\nEspecífico (Vibraciones): Norma EN ISO 10819. Imprescindible si la máquina supera 2,5 m/s² de vibración."
+    };
+
+    function mostrarGuia() {
+        const val = document.getElementById('epi-guia').value;
+        const box = document.getElementById('guia-detalles');
+        if(val) {
+            box.style.display = 'block';
+            box.innerText = datosEpi[val];
+        } else {
+            box.style.display = 'none';
+        }
+    }
+
+    function llamarDelegado() {
+        const opcion = prompt("Seleccione el contacto:\n1. USERA\n2. CARABANCHEL\n3. VILLAVERDE\n4. DELEGADO CGT");
+        switch(opcion) {
+            case "1": window.location.href = "tel:000000001"; break; 
+            case "2": window.location.href = "tel:000000002"; break; 
+            case "3": window.location.href = "tel:000000003"; break; 
+            case "4": window.location.href = "tel:000000004"; break; 
+            default: if(opcion !== null) alert("Opción no válida");
+        }
+    }
+</script>
+
+</body>
+</html>
