@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Suite CGT Mobile</title>
     <style>
-        body { background-color: #f4f4f4; font-family: sans-serif; margin: 0; }
+        body { background-color: #f4f4f4; font-family: sans-serif; margin: 0; padding-bottom: 50px; }
         .header { background: #1a1a1a; color: #cc0000; text-align: center; padding: 25px 10px; border-bottom: 5px solid #cc0000; }
-        .header h1 { margin: 0; font-size: 26px; font-weight: 900; line-height: 1; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 900; line-height: 1.1; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
         .card { 
-            background: white; border-radius: 15px; padding: 20px; text-align: center; 
+            background: white; border-radius: 15px; padding: 15px; text-align: center; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: #333;
-            border: 1px solid #ddd; transition: 0.2s;
+            border: 1px solid #ddd; transition: 0.2s; display: flex; flex-direction: column; align-items: center;
         }
         .card:active { background: #fffafa; border-color: #cc0000; transform: scale(0.95); }
-        .card img { width: 55px; height: 55px; margin-bottom: 10px; }
-        .card span { font-weight: bold; font-size: 14px; display: block; }
+        .card img { width: 55px; height: 55px; margin-bottom: 10px; object-fit: contain; }
+        .card span { font-weight: bold; font-size: 13px; display: block; line-height: 1.2; }
         .footer { text-align: center; color: #888; font-size: 11px; padding: 20px; }
     </style>
 </head>
@@ -26,17 +26,30 @@
         <h1>NI NOS DOMARÁN</h1>
     </div>
 
-    <div class="grid">
-        <a href="tools/estres_calor.html" class="card">
-            <img src="icons/icono_1.png" alt="">
-            <span>Estrés Calor</span>
-        </a>
-        <a href="tools/desbrozadora.html" class="card">
-            <img src="icons/icono_desbroz.png" alt="">
-            <span>Desbrozadora</span>
-        </a>
-    </div>
+    <div id="tools-grid" class="grid">
+        </div>
 
     <div class="footer">© 2024 CGT - Herramientas de Prevención</div>
+
+    <script>
+        // Este código lee tu config.json y crea los botones automáticamente
+        fetch('config.json')
+            .then(response => response.json())
+            .then(data => {
+                const grid = document.getElementById('tools-grid');
+                data.forEach(tool => {
+                    const card = document.createElement('a');
+                    card.className = 'card';
+                    // Importante: revisa si tu carpeta es 'icons' o 'Icons'
+                    card.href = `tools/${tool.archivo}`; 
+                    card.innerHTML = `
+                        <img src="icons/${tool.icono}" onerror="this.src='icons/cgt1.png'">
+                        <span>${tool.nombre}</span>
+                    `;
+                    grid.appendChild(card);
+                });
+            })
+            .catch(error => console.error('Error cargando herramientas:', error));
+    </script>
 </body>
 </html>
