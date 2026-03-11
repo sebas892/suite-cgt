@@ -26,19 +26,24 @@
         <h1>NI NOS DOMARÁN</h1>
     </div>
 
-    <div id="tools-grid" class="grid"></div>
+    <div id="tools-grid" class="grid">
+        </div>
 
-    <div class="footer">© 2024 CGT - Herramientas de Prevención</div>
+    <div class="footer">© 2026 CGT - Herramientas de Prevención</div>
 
     <script>
-        fetch('config.json')
-            .then(response => response.json())
+        // Importante: Usamos 'Config.json' con C mayúscula
+        fetch('Config.json')
+            .then(response => {
+                if (!response.ok) throw new Error('No se pudo cargar Config.json');
+                return response.json();
+            })
             .then(data => {
                 const grid = document.getElementById('tools-grid');
                 data.forEach(tool => {
                     const card = document.createElement('a');
                     card.className = 'card';
-                    // Ajustado a 'Tools' con T mayúscula
+                    // Usamos 'Tools' e 'Icons' con mayúscula inicial
                     card.href = `Tools/${tool.archivo}`; 
                     card.innerHTML = `
                         <img src="Icons/${tool.icono}" onerror="this.src='Icons/cgt1.png'">
@@ -47,7 +52,11 @@
                     grid.appendChild(card);
                 });
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('tools-grid').innerHTML = 
+                `<p style="grid-column: 1/-1; text-align:center;">Error: Asegúrate de que el archivo se llame Config.json (con C mayúscula) en GitHub.</p>`;
+            });
     </script>
 </body>
 </html>
