@@ -26,13 +26,11 @@
         <h1>NI NOS DOMARÁN</h1>
     </div>
 
-    <div id="tools-grid" class="grid">
-        </div>
+    <div id="tools-grid" class="grid"></div>
 
     <div class="footer">© 2024 CGT - Herramientas de Prevención</div>
 
     <script>
-        // Este código lee tu config.json y crea los botones automáticamente
         fetch('config.json')
             .then(response => response.json())
             .then(data => {
@@ -40,16 +38,16 @@
                 data.forEach(tool => {
                     const card = document.createElement('a');
                     card.className = 'card';
-                    // Importante: revisa si tu carpeta es 'icons' o 'Icons'
-                    card.href = `tools/${tool.archivo}`; 
+                    // Ajustado a 'Tools' con T mayúscula
+                    card.href = `Tools/${tool.archivo}`; 
                     card.innerHTML = `
-                        <img src="icons/${tool.icono}" onerror="this.src='icons/cgt1.png'">
+                        <img src="Icons/${tool.icono}" onerror="this.src='Icons/cgt1.png'">
                         <span>${tool.nombre}</span>
                     `;
                     grid.appendChild(card);
                 });
             })
-            .catch(error => console.error('Error cargando herramientas:', error));
+            .catch(error => console.error('Error:', error));
     </script>
 </body>
 </html>
